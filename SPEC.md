@@ -1,55 +1,92 @@
-# MCP Marketplace — Product Specification
+# MCP Marketplace — Product Spec
 
-## Concept & Vision
-A sleek, developer-focused marketplace for discovering MCP (Model Context Protocol) servers. Think "npm for AI agent tools" — clean, informative, instantly useful. The site should feel like a premium directory that makes finding and integrating MCP servers frictionless.
+## 1. Concept & Vision
 
-## Design Language
-- **Aesthetic**: Developer tool meets modern SaaS — dark-mode primary, clean lines, monospace accents
-- **Colors**:
-  - Background: `#0d1117` (deep dark)
-  - Card bg: `#161b22`
-  - Border: `#30363d`
-  - Primary: `#58a6ff` (blue accent)
-  - Success: `#3fb950`
-  - Text: `#e6edf3`
-  - Muted: `#8b949e`
-- **Typography**: `Inter` for UI, `JetBrains Mono` for code/technical content
-- **Motion**: Subtle fade-in on cards, smooth filter transitions
+MCP Marketplace — MCP server keşif ve yapılandırma aracı. Tek sayfa, hızlı, deploy edilebilir. Kullanıcılar MCP server'ları keşfeder, filtreler, ve tek tıkla `.mcp.json` yapılandırması kopyalar. $9 one-time.
 
-## Layout & Structure
-- Single page: Hero search → Server grid with filters → Footer
-- No scroll needed for core discovery flow
-- Responsive: 1-3 column card grid based on viewport
+**Positioning:** mcpmarket.com'un eksik bıraktığı yerde — gerçek registry deneyimi, filtreleme, anlık yapılandırma kopyalama.
 
-## Features & Interactions
+## 2. Design Language
 
-### Hero Section
-- Product name + tagline
-- Large search input (auto-focus on load)
-- Category filter pills below search
+- **Aesthetic:** Terminal/dev-tool teması, koyu mod, monospace aksanlar
+- **Colors:** bg #0f0f23, card #1a1a2e, accent #00d4ff (cyan), text #e0e0e0
+- **Typography:** JetBrains Mono (monospace) + Inter (UI text)
+- **Motion:** Minimal — kart hover'da subtle glow, buton click'te pulse
 
-### Server Cards
-- Server name, owner, short description
-- Category tags (badge style)
-- "How to install" expandable section
-- "Copy .mcp.json config" button → clipboard + toast
+## 3. Layout & Structure
 
-### Categories
-- All, Database, File System, Web, AI/ML, Development, Productivity, etc.
+```
+┌─────────────────────────────────────────┐
+│  Header: "MCP Marketplace" + tagline    │
+│  Search bar + kategori filtreleri       │
+├─────────────────────────────────────────┤
+│  Featured servers (3-6 cards)           │
+├─────────────────────────────────────────┤
+│  All servers grid (search/filterable)    │
+│  ┌────┐ ┌────┐ ┌────┐ ┌────┐           │
+│  │card│ │card│ │card│ │card│           │
+│  └────┘ └────┘ └────┘ └────┘           │
+├─────────────────────────────────────────┤
+│  Footer: price $9 + "Get MCP Marketplace"│
+└─────────────────────────────────────────┘
+```
 
-### Search
-- Real-time client-side filtering by name/description
-- Category pre-filter + text search combo
+## 4. Features & Interactions
 
-## Technical Approach
-- Single HTML + Vanilla JS (no framework, maximum simplicity)
-- Static MCP server data (JSON array embedded in page)
-- Source for server data: mcpservers.org public data + curated additions
-- Deploy: Vercel static (no server function needed for MVP)
+### Server Card
+- İsim, açıklama (2 satır max), kategoriler (badge)
+- "Copy .mcp.json" butonu → clipboard'a JSON kopyala + "Copied!" feedback
+- Hover: subtle glow border
 
-## Price
-- $9 one-time (Polar checkout link — catalog product)
-- No recurring, no subscription
+### Search/Filter
+- Text arama: isim + açıklama
+- Kategori filter: dropdown multi-select (AI, Dev Tools, Browser, Database, vs.)
+- Real-time filtreleme (JS ile, no reload)
 
-## Content Source
-MCP server registry data from mcpservers.org + manual curated list of popular servers
+### Data Source
+- mcpservers.org API'si veya statik JSON fallback
+- Local storage ile caching (24 saat)
+
+### Buy Button
+- Polar checkout link — $9 one-time
+- Checkout açıldığında: teşekkür mesajı + "access key" gösterimi
+
+## 5. Component Inventory
+
+### SearchBar
+- Placeholder: "Search MCP servers..."
+- Clear button (X) when text present
+
+### CategoryFilter
+- Dropdown multi-select
+- Kategoriler: AI, Dev Tools, Browser, Database, File System, Security, Misc
+
+### ServerCard
+- States: default, hover (glow border), copied (checkmark feedback)
+- Data: name, description, categories[], install command, mcpConfig
+
+### BuyButton
+- Default: "$9 — Get Access"
+- Loading: spinner
+- Success: checkout redirect
+
+## 6. Technical Approach
+
+- **Stack:** Single HTML + Vanilla JS (no build step, max portability)
+- **Data:** Fetch from mcpservers.org API, fallback to embedded sample data
+- **Storage:** localStorage for cache + recently copied configs
+- **Checkout:** Polar checkout link (reusable, catalog product)
+- **Price source:** $9 (hardcoded, matches Polar product)
+- **Deploy:** GitHub + Vercel (standard product flow)
+
+## 7. Product Metadata
+
+- **slug:** mcp-marketplace
+- **name:** MCP Marketplace
+- **price:** 9
+- **description:** Discover, explore, and configure MCP servers. The registry for AI tool integrations.
+- **payment_provider:** polar
+- **checkout_url:** (Polar checkout link — generated after product creation)
+- **vercel_url:** (post-deploy)
+- **polar_product_id:** (post-creation)
+- **polar_checkout_link_id:** (post-creation)
