@@ -1,17 +1,19 @@
 {
   "slug": "mcp-marketplace",
   "name": "MCP Marketplace",
-  "description": "Discover, explore, and configure MCP servers. The registry for AI tool integrations — copy .mcp.json in one click.",
+  "description": "Discover, explore, and configure MCP servers. The registry for AI tool integrations \u2014 copy .mcp.json in one click.",
   "price": 9,
   "payment_provider": "polar",
-  "checkout_url": "",
+  "checkout_url": "https://buy.polar.sh/polar_cl_SwvVyQD7WIAwL3NS4oyQiHSARBa6DAcZJUj4I0B91TZ",
   "vercel_url": "",
-  "polar_product_id": "",
-  "polar_checkout_link_id": "",
+  "polar_product_id": "51ec6fc0-d4db-4951-9839-f1aee57f3616",
+  "polar_checkout_link_id": "56ff5ef5-d25e-4ea0-b52d-77d06462aff8",
   "status": "building",
   "build_type": "static",
   "deploy_command": "",
   "has_custom_domain": false,
   "created_at": "2026-04-26",
-  "updated_at": "2026-04-26"
+  "updated_at": "2026-04-26",
+  "polar_product_price_id": "9262f905-3936-4d6a-9a21-91537c6a7962",
+  "tagline": "Discover, explore and configure MCP servers instantly"
 }
