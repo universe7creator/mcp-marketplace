@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MCP Marketplace — Discover MCP Servers for AI Agents</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1117;
+      --card-bg: #161b22;
+      --border: #30363d;
+      --primary: #58a6ff;
+      --success: #3fb950;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --tag-bg: #1f2937;
+      --tag-text: #a5d6ff;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* HEADER */
+    header {
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .logo-mark {
+      background: var(--primary);
+      color: var(--bg);
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .buy-badge {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: border-color 0.2s;
+    }
+    .buy-badge:hover { border-color: var(--primary); color: var(--primary); }
+
+    /* HERO */
+    .hero {
+      padding: 60px 0 40px;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 700;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, var(--text) 0%, var(--primary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      font-size: 18px;
+      color: var(--muted);
+      max-width: 560px;
+      margin: 0 auto 32px;
+    }
+
+    /* SEARCH */
+    .search-wrap {
+      max-width: 560px;
+      margin: 0 auto 20px;
+      position: relative;
+    }
+    .search-input {
+      width: 100%;
+      padding: 14px 18px 14px 48px;
+      font-size: 16px;
+      font-family: inherit;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .search-input::placeholder { color: var(--muted); }
+    .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(88,166,255,0.15); }
+    .search-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    /* FILTER PILLS */
+    .filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+    .filter-pill {
+      padding: 6px 14px;
+      border-radius: 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .filter-pill:hover { border-color: var(--primary); color: var(--text); }
+    .filter-pill.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: var(--bg);
+      font-weight: 600;
+    }
+
+    /* GRID */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+      padding-bottom: 60px;
+    }
+
+    /* CARD */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      transition: border-color 0.2s, transform 0.2s;
+      animation: fadeUp 0.3s ease-out;
+    }
+    .card:hover { border-color: var(--primary); transform: translateY(-2px); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .card-owner { font-size: 12px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+    .card-desc { font-size: 14px; color: var(--muted); margin-bottom: 12px; line-height: 1.5; min-height: 42px; }
+
+    .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+    .tag {
+      padding: 3px 8px;
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      font-size: 11px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    .install-toggle {
+      font-size: 13px;
+      color: var(--muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+    .install-toggle:hover { color: var(--primary); }
+    .install-code {
+      display: none;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--success);
+      word-break: break-all;
+    }
+    .install-code.show { display: block; }
+
+    .copy-btn {
+      width: 100%;
+      padding: 10px;
+      background: var(--primary);
+      color: var(--bg);
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .copy-btn:hover { opacity: 0.85; }
+    .copy-btn.copied { background: var(--success); }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--success);
+      color: var(--bg);
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 100;
+    }
+    .toast.show { opacity: 1; }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* NO RESULTS */
+    .no-results {
+      text-align: center;
+      padding: 60px 0;
+      color: var(--muted);
+      grid-column: 1 / -1;
+    }
+    .no-results h3 { color: var(--text); margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container header-inner">
+    <a href="#" class="logo">
+      <span class="logo-mark">MCP</span>
+      Marketplace
+    </a>
+    <a href="#" class="buy-badge" id="buyBtn">$9 — Buy Now</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <h1>Find the Perfect MCP Server</h1>
+    <p>Discover, explore, and integrate MCP servers into your AI agents. One click to copy the config.</p>
+
+    <div class="search-wrap">
+      <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" class="search-input" id="searchInput" placeholder="Search MCP servers (e.g. 'database', 'file system')..." autocomplete="off">
+    </div>
+
+    <div class="filters" id="filters">
+      <button class="filter-pill active" data-cat="all">All</button>
+      <button class="filter-pill" data-cat="database">Database</button>
+      <button class="filter-pill" data-cat="filesystem">File System</button>
+      <button class="filter-pill" data-cat="web">Web</button>
+      <button class="filter-pill" data-cat="ai">AI / ML</button>
+      <button class="filter-pill" data-cat="devtools">Dev Tools</button>
+      <button class="filter-pill" data-cat="productivity">Productivity</button>
+      <button class="filter-pill" data-cat="communication">Communication</button>
+      <button class="filter-pill" data-cat="research">Research</button>
+    </div>
+  </div>
+</section>
+
+<main class="container">
+  <div class="grid" id="grid"></div>
+</main>
+
+<footer>
+  <div class="container">
+    <p>MCP Marketplace — Discover MCP servers for Claude Code, Cursor, Cline, and more</p>
+  </div>
+</footer>
+
+<div class="toast" id="toast">Copied to clipboard!</div>
+
+<script>
+const CHECKOUT_URL = 'https://buy.polar.sh/polar_cl_LdNF3aL3BbYGULiwADFDyrlxd9jUk84LowzYE023zdx';
+
+const servers = [
+  {
+    name: "Polymarket API",
+    owner: "polymarket",
+    description: "Access prediction markets, trade on real-world events, and query market data via the Polymarket API.",
+    categories: ["web", "ai"],
+    installCmd: "npx @modelcontextprotocol/server-polymarket",
+    mcpJson: { "mcpServers": { "polymarket": { "command": "npx", "args": ["@modelcontextprotocol/server-polymarket"] } } }
+  },
+  {
+    name: "GitHub",
+    owner: "modelcontextprotocol",
+    description: "Interact with GitHub repositories, issues, pull requests, and workflows directly from your AI agent.",
+    categories: ["devtools", "productivity"],
+    installCmd: "npx @modelcontextprotocol/server-github",
+    mcpJson: { "mcpServers": { "github": { "command": "npx", "args": ["@modelcontextprotocol/server-github"] } } }
+  },
+  {
+    name: "Filesystem",
+    owner: "modelcontextprotocol",
+    description: "Read, write, and navigate local files. Essential for AI agents that need to work with local codebases.",
+    categories: ["filesystem"],
+    installCmd: "npx @modelcontextprotocol/server-filesystem",
+    mcpJson: { "mcpServers": { "filesystem": { "command": "npx", "args": ["@modelcontextprotocol/server-filesystem", "/path/to/directory"] } } }
+  },
+  {
+    name: "Slack",
+    owner: "modelcontextprotocol",
+    description: "Send messages, manage channels, and interact with your Slack workspace from AI agents.",
+    categories: ["communication", "productivity"],
+    installCmd: "npx @modelcontextprotocol/server-slack",
+    mcpJson: { "mcpServers": { "slack": { "command": "npx", "args": ["@modelcontextprotocol/server-slack"] } } }
+  },
+  {
+    name: "PostgreSQL",
+    owner: "modelcontextprotocol",
+    description: "Connect to PostgreSQL databases, run queries, and manage data — perfect for AI-assisted database work.",
+    categories: ["database"],
+    installCmd: "npx @modelcontextprotocol/server-postgres",
+    mcpJson: { "mcpServers": { "postgres": { "command": "npx", "args": ["@modelcontextprotocol/server-postgres"], "env": { "DATABASE_URL": "postgresql://user:password@localhost:5432/mydb" } } } }
+  },
+  {
+    name: "Sentry",
+    owner: "modelcontextprotocol",
+    description: "Monitor and manage Sentry errors, issues, and performance data from your AI agent workflow.",
+    categories: ["devtools", "productivity"],
+    installCmd: "npx @modelcontextprotocol/server-sentry",
+    mcpJson: { "mcpServers": { "sentry": { "command": "npx", "args": ["@modelcontextprotocol/server-sentry"] } } }
+  },
+  {
+    name: "Google Maps",
+    owner: "modelcontextprotocol",
+    description: "Get driving directions, geocode locations, find nearby places, and integrate maps into AI workflows.",
+    categories: ["web", "productivity"],
+    installCmd: "npx @modelcontextprotocol/server-google-maps",
+    mcpJson: { "mcpServers": { "google-maps": { "command": "npx", "args": ["@modelcontextprotocol/server-google-maps"] } } }
+  },
+  {
+    name: "Brave Search",
+    owner: "modelcontextprotocol",
+    description: "Web search powered by Brave. Fast, private search results for AI agents without tracking.",
+    categories: ["web", "ai"],
+    installCmd: "npx @modelcontextprotocol/server-brave-search",
+    mcpJson: { "mcpServers": { "brave-search": { "command": "npx", "args": ["@modelcontextprotocol/server-brave-search"] } } }
+  },
+  {
+    name: "Memory (EverMind MSA)",
+    owner: "EverMind-AI",
+    description: "Long-term memory for AI agents. Scalable sparse latent-state memory framework for 100M token throughput.",
+    categories: ["ai"],
+    installCmd: "pip install msa-mcp && msa-mcp",
+    mcpJson: { "mcpServers": { "evermind-msa": { "command": "python", "args": ["-m", "msa_mcp"] } } }
+  },
+  {
+    name: "Sequential Thinking",
+    owner: "modelcontextprotocol",
+    description: "Enables AI agents to perform structured, multi-step reasoning chains for complex problem solving.",
+    categories: ["ai", "devtools"],
+    installCmd: "npx @modelcontextprotocol/server-sequential-thinking",
+    mcpJson: { "mcpServers": { "sequential-thinking": { "command": "npx", "args": ["@modelcontextprotocol/server-sequential-thinking"] } } }
+  },
+  {
+    name: "Todoist",
+    owner: "modelcontextprotocol",
+    description: "Manage tasks, projects, and labels in Todoist. Create recurring tasks, update deadlines, and track progress.",
+    categories: ["productivity"],
+    installCmd: "npx @modelcontextprotocol/server-todoist",
+    mcpJson: { "mcpServers": { "todoist": { "command": "npx", "args": ["@modelcontextprotocol/server-todoist"] } } }
+  },
+  {
+    name: "ArXiv",
+    owner: "universe7creator",
+    description: "Search and download academic papers from arXiv. Perfect for AI research and literature review workflows.",
+    categories: ["research", "ai"],
+    installCmd: "Built-in (UniverseCreator) — already installed",
+    mcpJson: { "mcpServers": { "arxiv": { "command": "uvx", "args": ["arxiv-mcp"] } } }
+  },
+  {
+    name: "MCP Tube (YouTube)",
+    owner: "universe7creator",
+    description: "YouTube video library and analysis. Extract transcripts, search videos, and generate illustrated reports.",
+    categories: ["research", "ai"],
+    installCmd: "Built-in (UniverseCreator) — already installed",
+    mcpJson: { "mcpServers": { "mcptube": { "command": "uvx", "args": ["mcptube"] } } }
+  },
+  {
+    name: "tomcp",
+    owner: "Ami3466",
+    description: "Turn any website or documentation into an MCP server in seconds. Works with Claude Code, Cursor, and Cline.",
+    categories: ["web", "devtools"],
+    installCmd: "npx tomcp https://docs.example.com",
+    mcpJson: { "mcpServers": { "tomcp": { "command": "npx", "args": ["tomcp", "https://docs.example.com"] } } }
+  },
+  {
+    name: "xterm.js",
+    owner: "xtermjs",
+    description: "Build terminals in the browser. Embed a full-featured terminal emulator in web apps and AI agent interfaces.",
+    categories: ["devtools", "web"],
+    installCmd: "npm install @xterm/xterm @xterm/addon-fit",
+    mcpJson: { "mcpServers": { "xterm": { "command": "npm", "args": ["exec", "--yes", "@xtermjs/xterm"] } } }
+  },
+  {
+    name: "Every Study",
+    owner: "mcpservers",
+    description: "Search and explore clinical trials, medical studies, and research papers for healthcare AI applications.",
+    categories: ["research", "ai"],
+    installCmd: "npx @mcpservers/everystudy",
+    mcpJson: { "mcpServers": { "everystudy": { "command": "npx", "args": ["@mcpservers/everystudy"] } } }
+  },
+  {
+    name: "Gmail",
+    owner: "modelcontextprotocol",
+    description: "Read and send emails through Gmail. Manage labels, search messages, and automate email workflows.",
+    categories: ["communication", "productivity"],
+    installCmd: "npx @modelcontextprotocol/server-gmail",
+    mcpJson: { "mcpServers": { "gmail": { "command": "npx", "args": ["@modelcontextprotocol/server-gmail"] } } }
+  },
+  {
+    name: "SQLite",
+    owner: "modelcontextprotocol",
+    description: "Lightweight database operations with SQLite. Create, query, and manage local SQLite databases from AI agents.",
+    categories: ["database", "filesystem"],
+    installCmd: "npx @modelcontextprotocol/server-sqlite",
+    mcpJson: { "mcpServers": { "sqlite": { "command": "npx", "args": ["@modelcontextprotocol/server-sqlite", "/path/to/db.sqlite"] } } }
+  },
+  {
+    name: "Puppeteer",
+    owner: "modelcontextprotocol",
+    description: "Browser automation via Puppeteer. Take screenshots, scrape web pages, and interact with dynamic web content.",
+    categories: ["web", "devtools"],
+    installCmd: "npx @modelcontextprotocol/server-puppeteer",
+    mcpJson: { "mcpServers": { "puppeteer": { "command": "npx", "args": ["@modelcontextprotocol/server-puppeteer"] } } }
+  },
+  {
+    name: "MCP Council",
+    owner: "universe7creator",
+    description: "Multi-agent deliberation system. Start councils of AI agents to debate, decide, and reach consensus on topics.",
+    categories: ["ai", "communication"],
+    installCmd: "Built-in (UniverseCreator) — already installed",
+    mcpJson: { "mcpServers": { "council": { "command": "uvx", "args": ["council-mcp"] } } }
+  },
+  {
+    name: "Context7 Docs",
+    owner: "claude-plugins-official",
+    description: "Access up-to-date library documentation for any framework. Query Context7 for current API docs and examples.",
+    categories: ["devtools", "ai"],
+    installCmd: "Plugin via Claude Code — enabled by default",
+    mcpJson: { "mcpServers": { "context7": { "command": "npx", "args": ["-y", "@context7/mcp-server"] } } }
+  },
+  {
+    name: "Playwright Browser",
+    owner: "claude-plugins-official",
+    description: "Browser automation and testing. Navigate pages, click, fill forms, take screenshots from AI agents.",
+    categories: ["web", "devtools"],
+    installCmd: "Plugin via Claude Code — enabled by default",
+    mcpJson: { "mcpServers": { "playwright": { "command": "npx", "args": ["@playwright/mcp-server"] } } }
+  },
+  {
+    name: "Chrome DevTools",
+    owner: "chrome-devtools",
+    description: "Full Chrome browser control. Navigate, click, type, take snapshots, and automate browser workflows from AI.",
+    categories: ["web", "devtools"],
+    installCmd: "npx f556c77727d59f50",
+    mcpJson: { "mcpServers": { "chrome-devtools": { "command": "npx", "args": ["f556c77727d59f50"] } } }
+  },
+  {
+    name: "Firecrawl",
+    owner: "mcpservers",
+    description: "Crawl and scrape entire websites with AI. Extract structured data, screenshots, and content from any URL.",
+    categories: ["web", "ai"],
+    installCmd: "npx firecrawl-mcp",
+    mcpJson: { "mcpServers": { "firecrawl": { "command": "npx", "args": ["firecrawl-mcp"] } } }
+  },
+  {
+    name: "AWS KB Retrieval",
+    owner: "modelcontextprotocol",
+    description: "Query AWS Knowledge Base repositories for RAG workflows. Retrieve relevant documents for AI context.",
+    categories: ["ai", "database"],
+    installCmd: "npx @modelcontextprotocol/server-aws-kb-retrieval",
+    mcpJson: { "mcpServers": { "aws-kb": { "command": "npx", "args": ["@modelcontextprotocol/server-aws-kb-retrieval"] } } }
+  }
+];
+
+let currentCat = 'all';
+let searchQ = '';
+
+const grid = document.getElementById('grid');
+const searchInput = document.getElementById('searchInput');
+const filters = document.getElementById('filters');
+const toast = document.getElementById('toast');
+
+function render() {
+  const q = searchQ.toLowerCase();
+  const filtered = servers.filter(s => {
+    const matchCat = currentCat === 'all' || s.categories.includes(currentCat);
+    const matchSearch = !q || s.name.toLowerCase().includes(q) || s.description.toLowerCase().includes(q) || s.categories.some(c => c.includes(q));
+    return matchCat && matchSearch;
+  });
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div class="no-results"><h3>No servers found</h3><p>Try a different search or category</p></div>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map((s, i) => `
+    <div class="card" style="animation-delay: ${i * 30}ms">
+      <div class="card-header">
+        <div>
+          <div class="card-title">${s.name}</div>
+          <div class="card-owner">${s.owner}</div>
+        </div>
+      </div>
+      <div class="card-desc">${s.description}</div>
+      <div class="tags">${s.categories.map(c => `<span class="tag">${c}</span>`).join('')}</div>
+      <button class="install-toggle" onclick="toggleInstall(this)">
+        <span>How to install</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="install-code">${s.installCmd}</div>
+      <button class="copy-btn" onclick="copyConfig(this, ${servers.indexOf(s)})">Copy .mcp.json config</button>
+    </div>
+  `).join('');
+}
+
+function toggleInstall(btn) {
+  const code = btn.nextElementSibling;
+  code.classList.toggle('show');
+  btn.querySelector('span').textContent = code.classList.contains('show') ? 'Hide install' : 'How to install';
+}
+
+function copyConfig(btn, idx) {
+  const config = JSON.stringify(servers[idx].mcpJson, null, 2);
+  navigator.clipboard.writeText(config).then(() => {
+    btn.classList.add('copied');
+    btn.textContent = 'Copied!';
+    showToast('Config copied to clipboard!');
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.textContent = 'Copy .mcp.json config';
+    }, 2000);
+  });
+}
+
+function showToast(msg) {
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+filters.addEventListener('click', e => {
+  if (e.target.classList.contains('filter-pill')) {
+    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    e.target.classList.add('active');
+    currentCat = e.target.dataset.cat;
+    render();
+  }
+});
+
+searchInput.addEventListener('input', e => {
+  searchQ = e.target.value;
+  render();
+});
+
+document.getElementById('buyBtn').addEventListener('click', e => {
+  e.preventDefault();
+  window.open(CHECKOUT_URL, '_blank');
+});
+
+render();
+searchInput.focus();
+</script>
+</body>
+</html>
